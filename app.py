@@ -28,7 +28,7 @@ def prepare_databases():
     # [설정] 압축 파일명과 해제될 폴더명 매핑
     db_configs = [
         {"zip": "chroma_db_catalog.zip", "folder": "chroma_db_catalog"},
-        {"zip": "chroma_db_catalog_clause.zip", "folder": "chroma_db_clause"}
+        {"zip": "chroma_db_clause.zip", "folder": "chroma_db_clause"}
     ]
 
     for db in db_configs:
@@ -330,8 +330,13 @@ def load_catalog_vectorstore():
 
 @st.cache_resource
 def get_llm():
-    # temperature를 0으로 설정하여 결과의 일관성을 높임
-    return ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", temperature=0)
+    # 1. 스트림릿 Secrets에서 키를 가져와 google_api_key 인자에 넣어줍니다.
+    # 2. 반드시 대소문자가 Secrets에 설정한 이름과 같아야 합니다.
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash-exp", 
+        temperature=0,
+        google_api_key=st.secrets["GOOGLE_API_KEY"] # 이 부분을 추가해야 합니다!
+    )
 
 # Session State 초기화
 if "step" not in st.session_state: st.session_state.step = 1
